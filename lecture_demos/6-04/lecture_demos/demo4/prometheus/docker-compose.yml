@@ -14,7 +14,7 @@ networks:
 services:
 
   prometheus:
-    image: prom/prometheus:v2.36.2
+    image: prom/prometheus:latest
     container_name: odinaevdd-netology-prometheus
     volumes:
       - ./prometheus/:/etc/prometheus/
@@ -27,11 +27,11 @@ services:
     ports:
       - 9090:9090
     links:
-#      - odinaevdd-netology-cadvisor:cadvisor
-#      - odinaevdd-netology-alertmanager:alertmanager
+      # - cadvisor:cadvisor
+      # - alertmanager:alertmanager
       - pushgateway:pushgateway
     depends_on:
-#      - odinaevdd-netology-cadvisor 
+      # - cadvisor 
       - pushgateway 
     networks:
       - odinaevdd-my-netology-hw
@@ -41,38 +41,63 @@ services:
 #        constraints:
 #          - node.hostname == ${HOSTNAME}
 
-#  odinaevdd-netology-alertmanager:
-#    image: prom/alertmanager
-#    ports:
-#      - 9093:9093
-#    volumes:
-#      - ./alertmanager/:/etc/alertmanager/
-#    networks:
-#      - odinaevdd-my-netology-hw
-#    restart: always
-#    command:
-#      - '--config.file=/etc/alertmanager/config.yml'
-#      - '--storage.path=/alertmanager'
+  # alertmanager:
+  #   image: prom/alertmanager
+  #   container_name: odinaevdd-netology-alertmanager
+  #   ports:
+  #     - 9093:9093
+  #   volumes:
+  #     - ./alertmanager/:/etc/alertmanager/
+  #   networks:
+  #     - odinaevdd-my-netology-hw
+  #   restart: always
+  #   command:
+  #     - '--config.file=/etc/alertmanager/config.yml'
+  #     - '--storage.path=/alertmanager'
 #    deploy:
 #      placement:
 #        constraints:
 #          - node.hostname == ${HOSTNAME}
 
+  # node-exporter:
+  #   image: quay.io/prometheus/node-exporter:latest
+  #   container_name: odinaevdd-netology-node-exporter
+  #   volumes:
+  #     - /proc:/host/proc:ro
+  #     - /sys:/host/sys:ro
+  #     - /:/rootfs:ro,rslave
+  #     - /:/host:ro,rslave   # Ensure using 'rslave' for /host mount
+  #   command: 
+  #     - '--path.rootfs=/host'
+  #     - '--path.procfs=/host/proc'
+  #     - '--path.sysfs=/host/sys'
+  #     - --collector.filesystem.ignored-mount-points
+  #     - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
+  #   ports:
+  #     - 9100:9100
+  #   networks:
+  #     - odinaevdd-my-netology-hw
+  #   restart: always
+  #   deploy:
+  #     mode: global
 
-#  odinaevdd-netology-cadvisor:
-#    image: gcr.io/cadvisor/cadvisor
-#    volumes:
-#      - /:/rootfs:ro,rslave
-#      - /var/run:/var/run:rw
-#      - /sys:/sys:ro
-#      - /var/lib/docker/:/var/lib/docker:ro,rslave
-#    ports:
-#      - 8080:8080
-#    networks:
-#      - odinaevdd-my-netology-hw
-#    restart: always
-#    deploy:
-#      mode: global
+
+
+  # cadvisor:
+  #   image: gcr.io/cadvisor/cadvisor
+  #   container_name: odinaevdd-netology-cadvisor
+  #   volumes:
+  #     - /:/rootfs:ro,rslave
+  #     - /var/run:/var/run:rw
+  #     - /sys:/sys:ro
+  #     - /var/lib/docker/:/var/lib/docker:ro,rslave
+  #   ports:
+  #     - 8080:8080
+  #   networks:
+  #     - odinaevdd-my-netology-hw
+  #   restart: always
+  #   deploy:
+  #     mode: global
 
 
   pushgateway:
